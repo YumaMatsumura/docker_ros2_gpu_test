@@ -1,0 +1,60 @@
+version: '3'
+
+networks:
+  ros2:
+    driver: bridge
+
+services:
+  rviz2-test:
+    image: ros2
+    build: .
+    container_name: rviz2-test
+    environment:
+      - DISPLAY
+      - XAUTHORITY=/tmp/.docker.xauth
+      - NVIDIA_DRIVER_CAPABILITIES=compute,graphics,utility,video,display
+      - NVIDIA_VISIBLE_DEVICES=all
+      - ROS_DOMAIN_ID=111
+      - ROS_LOCALHOST_ONLY=1
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+    devices:
+      - /dev/dri
+    command: rviz2
+    networks:
+      - ros2
+    ipc: host
+    restart: always
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+
+  gazebo-test:
+    image: ros2
+    build: .
+    container_name: gazebo-test
+    environment:
+      - DISPLAY
+      - XAUTHORITY=/tmp/.docker.xauth
+      - NVIDIA_DRIVER_CAPABILITIES=compute,graphics,utility,video,display
+      - NVIDIA_VISIBLE_DEVICES=all
+      - ROS_DOMAIN_ID=111
+      - ROS_LOCALHOST_ONLY=1
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+    devices:
+      - /dev/dri
+    command: gazebo
+    networks:
+      - ros2
+    ipc: host
+    restart: always
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
